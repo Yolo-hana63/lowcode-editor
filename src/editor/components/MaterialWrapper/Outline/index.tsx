@@ -1,8 +1,8 @@
 import { Tree } from "antd";
-import { useComponetsStore } from "../../../stores/components";
+import { useComponentsStore } from "../../../stores/components";
 
 export function Outline() {
-  const { components, setCurComponentId } = useComponetsStore();
+  const { components, setCurComponentId } = useComponentsStore();
 
   return (
     <Tree

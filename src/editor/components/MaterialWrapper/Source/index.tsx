@@ -1,8 +1,8 @@
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
-import { useComponetsStore } from "../../../stores/components";
+import { useComponentsStore } from "../../../stores/components";
 
 export function Source() {
-  const { components } = useComponetsStore();
+  const { components } = useComponentsStore();
 
   const handleEditorMount: OnMount = (editor, monaco) => {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyJ, () => {

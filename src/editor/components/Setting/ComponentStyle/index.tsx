@@ -1,28 +1,28 @@
-import { Form, Input, InputNumber, Select } from 'antd';
-import { CSSProperties, useEffect, useState } from 'react';
-import { useComponetsStore } from '../../../stores/components';
+import { Form, Input, InputNumber, Select } from "antd";
+import { CSSProperties, useEffect, useState } from "react";
+import { useComponentsStore } from "../../../stores/components";
 import {
   ComponentSetter,
   useComponentConfigStore,
-} from '../../../stores/component-config';
-import CssEditor from '../CssEditor';
-import { debounce } from 'lodash-es';
-import StyleToObject from 'style-to-object';
+} from "../../../stores/component-config";
+import CssEditor from "../CssEditor";
+import { debounce } from "lodash-es";
+import StyleToObject from "style-to-object";
 
 export function ComponentStyle() {
   const [form] = Form.useForm();
-  const [css, setCss] = useState<string>(`.comp{\n\n}`)
+  const [css, setCss] = useState<string>(`.comp{\n\n}`);
 
   const { curComponentId, curComponent, updateComponentStyles } =
-    useComponetsStore();
+    useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
 
   useEffect(() => {
-    form.resetFields()
+    form.resetFields();
     const data = form.getFieldsValue();
     form.setFieldsValue({ ...data, ...curComponent?.styles });
 
-    setCss(toCSSStr(curComponent?.styles))
+    setCss(toCSSStr(curComponent?.styles));
   }, [curComponent]);
 
   if (!curComponentId || !curComponent) return null;
@@ -30,11 +30,11 @@ export function ComponentStyle() {
   function renderFormElememt(setting: ComponentSetter) {
     const { type, options } = setting;
 
-    if (type === 'select') {
+    if (type === "select") {
       return <Select options={options} />;
-    } else if (type === 'input') {
+    } else if (type === "input") {
       return <Input />;
-    } else if (type === 'inputNumber') {
+    } else if (type === "inputNumber") {
       return <InputNumber />;
     }
   }
@@ -47,20 +47,23 @@ export function ComponentStyle() {
 
   function toCSSStr(css: Record<string, any>) {
     let str = `.comp {\n`;
-    for(const key in css) {
-        let value = css[key];
-        if(!value) {
-            continue;
-        }
-        if(['width', 'height'].includes(key) &&  !value.toString().endsWith('px')) {
-            value += 'px';
-        }
+    for (const key in css) {
+      let value = css[key];
+      if (!value) {
+        continue;
+      }
+      if (
+        ["width", "height"].includes(key) &&
+        !value.toString().endsWith("px")
+      ) {
+        value += "px";
+      }
 
-        str += `\t${key}: ${value};\n`
+      str += `\t${key}: ${value};\n`;
     }
     str += `}`;
     return str;
-}
+  }
 
   const handleEditorChange = debounce((value) => {
     setCss(value);
@@ -68,21 +71,23 @@ export function ComponentStyle() {
     const css: Record<string, any> = {};
 
     try {
-        const cssStr = value.replace(/\/\*.*\*\//, '') // 去掉注释 /** */
-            .replace(/(\.?[^{]+{)/, '') // 去掉 .comp {
-            .replace('}', '');// 去掉 }
+      const cssStr = value
+        .replace(/\/\*.*\*\//, "") // 去掉注释 /** */
+        .replace(/(\.?[^{]+{)/, "") // 去掉 .comp {
+        .replace("}", ""); // 去掉 }
 
-        StyleToObject(cssStr, (name, value) => {
-            css[name.replace(/-\w/, (item) => item.toUpperCase().replace('-', ''))] = value;
-        });
+      StyleToObject(cssStr, (name, value) => {
+        css[
+          name.replace(/-\w/, (item) => item.toUpperCase().replace("-", ""))
+        ] = value;
+      });
 
-        console.log(css);
-        updateComponentStyles(curComponentId, css, true);
-    } catch(e) { 
-      console.log(e)
-     }
-}, 500);
-
+      console.log(css);
+      updateComponentStyles(curComponentId, css, true);
+    } catch (e) {
+      console.log(e);
+    }
+  }, 500);
 
   return (
     <Form
@@ -96,8 +101,8 @@ export function ComponentStyle() {
           {renderFormElememt(setter)}
         </Form.Item>
       ))}
-      <div className='h-[200px] border-[1px] border-[#ccc]'>
-        <CssEditor value={css} onChange={handleEditorChange}/>
+      <div className="h-[200px] border-[1px] border-[#ccc]">
+        <CssEditor value={css} onChange={handleEditorChange} />
       </div>
     </Form>
   );

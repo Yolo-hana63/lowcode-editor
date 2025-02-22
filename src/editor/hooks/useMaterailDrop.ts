@@ -1,9 +1,9 @@
 import { useDrop } from "react-dnd";
 import { useComponentConfigStore } from "../stores/component-config";
-import { useComponetsStore } from "../stores/components";
+import { useComponentsStore } from "../stores/components";
 
 export function useMaterailDrop(accept: string[], id: number) {
-  const { addComponent } = useComponetsStore();
+  const { addComponent } = useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
 
   const [{ canDrop }, drop] = useDrop(() => ({
