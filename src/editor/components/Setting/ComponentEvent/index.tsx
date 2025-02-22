@@ -1,6 +1,11 @@
-import { Collapse, Select, CollapseProps } from "antd";
-import { useComponentConfigStore } from "../../../stores/component-config";
+import { Collapse, Select, CollapseProps, Button } from "antd";
+import {
+  ComponentEvent as ComponentEventType,
+  useComponentConfigStore,
+} from "../../../stores/component-config";
 import { useComponentsStore } from "../../../stores/components";
+import { useState } from "react";
+import { ActionModal } from "../ActionModal";
 import { GoToLink } from "./Actions/GoToLink";
 import { ShowMessage } from "./Actions/ShowMessages";
 
@@ -8,6 +13,8 @@ export function ComponentEvent() {
   const { curComponentId, curComponent, updateComponentProps } =
     useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
+  const [actionModalOpen, setActionModalOpen] = useState(false);
+  const [curEvent, setCurEvent] = useState<ComponentEventType>();
 
   if (!curComponent) return null;
 
@@ -22,7 +29,20 @@ export function ComponentEvent() {
   ).map((event) => {
     return {
       key: event.name,
-      label: event.label,
+      label: (
+        <div className="flex justify-between leading-[30px]">
+          {event.label}
+          <Button
+            type="primary"
+            onClick={() => {
+              setCurEvent(event);
+              setActionModalOpen(true);
+            }}
+          >
+            添加动作
+          </Button>
+        </div>
+      ),
       children: (
         <div>
           <div className="flex items-center">
@@ -53,6 +73,16 @@ export function ComponentEvent() {
   return (
     <div className="px-[10px]">
       <Collapse className="mb-[10px]" items={items} />
+      <ActionModal
+        visible={actionModalOpen}
+        eventConfig={curEvent!}
+        handleOk={() => {
+          setActionModalOpen(false);
+        }}
+        handleCancel={() => {
+          setActionModalOpen(false);
+        }}
+      />
     </div>
   );
 }

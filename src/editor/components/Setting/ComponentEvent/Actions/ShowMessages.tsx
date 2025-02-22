@@ -42,7 +42,7 @@ export function ShowMessage(props: { event: ComponentEvent }) {
         <div>类型：</div>
         <div>
           <Select
-            style={{ width: 160 }}
+            style={{ width: 500, height: 50 }}
             options={[
               { label: "成功", value: "success" },
               { label: "失败", value: "error" },
