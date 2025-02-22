@@ -161,7 +161,7 @@ function SelectedMask({ containerClassName, portalWrapperClassName, componentId 
                         menu={{
                             items: parentComponents.map(item => ({
                                 key: item?.id,
-                                label: item?.desc
+                                label: item?.desc,
                             })),
                             onClick: ({ key }) => {
                                 setCurComponentId(+key)

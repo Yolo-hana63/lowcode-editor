@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import { useDrag } from "react-dnd";
 
 export interface MaterialItemProps {
