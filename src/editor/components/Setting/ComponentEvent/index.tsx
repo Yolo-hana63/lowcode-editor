@@ -1,13 +1,14 @@
-import { Collapse, Select, CollapseProps, Button } from "antd";
+import { Collapse, Input, Select, CollapseProps, Button } from "antd";
+import { useComponentsStore } from "../../../stores/components";
 import {
   ComponentEvent as ComponentEventType,
   useComponentConfigStore,
 } from "../../../stores/component-config";
-import { useComponentsStore } from "../../../stores/components";
 import { useState } from "react";
+import { GoToLinkConfig } from "./Actions/GoToLink";
+import { ShowMessageConfig } from "./Actions/ShowMessages";
 import { ActionModal } from "../ActionModal";
-import { GoToLink } from "./Actions/GoToLink";
-import { ShowMessage } from "./Actions/ShowMessages";
+import { DeleteOutlined } from "@ant-design/icons";
 
 export function ComponentEvent() {
   const { curComponentId, curComponent, updateComponentProps } =
@@ -18,10 +19,20 @@ export function ComponentEvent() {
 
   if (!curComponent) return null;
 
-  function selectAction(eventName: string, value: string) {
-    if (!curComponentId) return;
+  function deleteAction(event: ComponentEventType, index: number) {
+    if (!curComponent) {
+      return;
+    }
 
-    updateComponentProps(curComponentId, { [eventName]: { type: value } });
+    const actions = curComponent.props[event.name]?.actions;
+
+    actions.splice(index, 1);
+
+    updateComponentProps(curComponent.id, {
+      [event.name]: {
+        actions: actions,
+      },
+    });
   }
 
   const items: CollapseProps["items"] = (
@@ -34,7 +45,8 @@ export function ComponentEvent() {
           {event.label}
           <Button
             type="primary"
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation();
               setCurEvent(event);
               setActionModalOpen(true);
             }}
@@ -45,40 +57,83 @@ export function ComponentEvent() {
       ),
       children: (
         <div>
-          <div className="flex items-center">
-            <div>动作：</div>
-            <Select
-              className="w-[160px]"
-              options={[
-                { label: "显示提示", value: "showMessage" },
-                { label: "跳转链接", value: "goToLink" },
-              ]}
-              onChange={(value) => {
-                selectAction(event.name, value);
-              }}
-              value={curComponent?.props?.[event.name]?.type}
-            />
-          </div>
-          {curComponent?.props?.[event.name]?.type === "goToLink" && (
-            <GoToLink event={event} />
-          )}
-          {curComponent?.props?.[event.name]?.type === "showMessage" && (
-            <ShowMessage event={event} />
+          {(curComponent.props[event.name]?.actions || []).map(
+            (item: GoToLinkConfig | ShowMessageConfig, index: number) => {
+              return (
+                <div>
+                  {item.type === "goToLink" ? (
+                    <div className="border border-[#aaa] m-[10px] p-[10px] relative">
+                      <div className="text-[blue]">跳转链接</div>
+                      <div>{item.url}</div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 10,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => deleteAction(event, index)}
+                      >
+                        <DeleteOutlined />
+                      </div>
+                    </div>
+                  ) : null}
+                  {item.type === "showMessage" ? (
+                    <div className="border border-[#aaa] m-[10px] p-[10px] relative">
+                      <div className="text-[blue]">消息弹窗</div>
+                      <div>{item.config.type}</div>
+                      <div>{item.config.text}</div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 10,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => deleteAction(event, index)}
+                      >
+                        <DeleteOutlined />
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              );
+            }
           )}
         </div>
       ),
     };
   });
 
+  function handleModalOk(config?: GoToLinkConfig | ShowMessageConfig) {
+    if (!config || !curEvent || !curComponent) {
+      return;
+    }
+
+    updateComponentProps(curComponent.id, {
+      [curEvent.name]: {
+        actions: [
+          ...(curComponent.props[curEvent.name]?.actions || []),
+          config,
+        ],
+      },
+    });
+
+    setActionModalOpen(false);
+  }
+
   return (
     <div className="px-[10px]">
-      <Collapse className="mb-[10px]" items={items} />
+      <Collapse
+        className="mb-[10px]"
+        items={items}
+        defaultActiveKey={componentConfig[curComponent.name].events?.map(
+          (item) => item.name
+        )}
+      />
       <ActionModal
         visible={actionModalOpen}
-        eventConfig={curEvent!}
-        handleOk={() => {
-          setActionModalOpen(false);
-        }}
+        handleOk={handleModalOk}
         handleCancel={() => {
           setActionModalOpen(false);
         }}
