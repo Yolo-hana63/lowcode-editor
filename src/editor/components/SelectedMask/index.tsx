@@ -3,27 +3,7 @@ import { createPortal } from "react-dom";
 import { getComponentById, useComponentsStore } from "../../stores/components";
 import { Dropdown, Popconfirm, Space } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
-
-function useResizeObserver(callback: (entry: ResizeObserverEntry) => void) {
-  const observerRef = useCallback(
-    (node: Element | null) => {
-      if (node) {
-        const resizeObserver = new ResizeObserver((entries) => {
-          entries.forEach(callback);
-        });
-
-        resizeObserver.observe(node);
-
-        return () => {
-          resizeObserver.disconnect();
-        };
-      }
-    },
-    [callback]
-  );
-
-  return observerRef;
-}
+import { useResizeObserver } from "../../hooks/useResizeObserver";
 
 interface SelectedMaskProps {
   portalWrapperClassName: string;

@@ -25,7 +25,7 @@ export function EditArea() {
           name: component.name,
           styles: component.styles,
           ...config.defaultProps,
-          ...component.props,
+          ...component.props, // component.props覆盖defaultprops
         },
         renderComponents(component.children || [])
       );
@@ -34,6 +34,7 @@ export function EditArea() {
 
   const [hoverComponentId, setHoverComponentId] = useState<number>();
 
+  // 监听鼠标悬停事件，获取悬停ID
   const handleMouseOver: MouseEventHandler = (e) => {
     const path = e.nativeEvent.composedPath();
 
@@ -42,6 +43,7 @@ export function EditArea() {
 
       const componentId = ele.dataset?.componentId;
       if (componentId) {
+        // +componentId能把string转换成number
         setHoverComponentId(+componentId);
         return;
       }

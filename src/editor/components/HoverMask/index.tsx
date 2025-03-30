@@ -65,7 +65,7 @@ const HoverMask = ({
     });
   };
 
-  // 会创建多个wrapper,直接挂载到某个元素上
+  // 会创建多个wrapper性能不好，修改为直接挂载到某个元素上
   //   const el = useMemo(() => {
   //     const el = document.createElement('div');
   //     el.className = 'wrapper';

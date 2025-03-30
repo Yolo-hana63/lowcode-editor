@@ -105,6 +105,7 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       prod: PageProd,
     },
   },
+  // 注册组件
   registerComponent: (name, componentConfig) =>
     set((state) => {
       return {
