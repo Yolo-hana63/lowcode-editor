@@ -7,7 +7,7 @@ import {
 import { useState } from "react";
 import { GoToLinkConfig } from "./Actions/GoToLink";
 import { ShowMessageConfig } from "./Actions/ShowMessages";
-import { ActionModal } from "../ActionModal";
+import { ActionModal } from "./ActionModal";
 import { DeleteOutlined } from "@ant-design/icons";
 
 export function ComponentEvent() {

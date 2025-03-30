@@ -1,10 +1,7 @@
 import { Modal, Segmented } from "antd";
 import { useState } from "react";
-import { GoToLink, GoToLinkConfig } from "../ComponentEvent/Actions/GoToLink";
-import {
-  ShowMessage,
-  ShowMessageConfig,
-} from "../ComponentEvent/Actions/ShowMessages";
+import { GoToLink, GoToLinkConfig } from "../Actions/GoToLink";
+import { ShowMessage, ShowMessageConfig } from "../Actions/ShowMessages";
 
 interface ActionModalProps {
   visible: boolean;
