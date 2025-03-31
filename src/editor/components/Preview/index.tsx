@@ -5,6 +5,22 @@ import { message } from "antd";
 import { GoToLinkConfig } from "../Setting/ComponentEvent/Actions/GoToLink";
 import { ShowMessageConfig } from "../Setting/ComponentEvent/Actions/ShowMessages";
 
+// 维护集合
+// const EventsMap = {
+//   showMessage: (action) => {
+//     if (action.config.type === "success") {
+//       message.success(action.config.text);
+//     } else if (action.config.type === "error") {
+//       message.error(action.config.text);
+//     }
+//   },
+//   goToLink: (action) => {
+//     window.location.href = action.url;
+//   },
+// };
+
+// type EventsMapType = GoToLinkConfig | ShowMessageConfig;
+
 export function Preview() {
   const { components } = useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
