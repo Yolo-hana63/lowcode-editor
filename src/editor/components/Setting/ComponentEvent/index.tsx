@@ -7,7 +7,7 @@ import {
 import { useState } from "react";
 import { GoToLinkConfig } from "./Actions/GoToLink";
 import { ShowMessageConfig } from "./Actions/ShowMessages";
-import { ActionModal } from "./ActionModal";
+import { ActionConfig, ActionModal } from "./ActionModal";
 import { DeleteOutlined } from "@ant-design/icons";
 
 export function ComponentEvent() {
@@ -58,7 +58,7 @@ export function ComponentEvent() {
       children: (
         <div>
           {(curComponent.props[event.name]?.actions || []).map(
-            (item: GoToLinkConfig | ShowMessageConfig, index: number) => {
+            (item: ActionConfig, index: number) => {
               return (
                 <div>
                   {item.type === "goToLink" ? (
@@ -96,6 +96,23 @@ export function ComponentEvent() {
                       </div>
                     </div>
                   ) : null}
+                  {item.type === "customJS" ? (
+                    <div className="border border-[#aaa] m-[10px] p-[10px] relative">
+                      <div className="text-[blue]">消息弹窗</div>
+                      <div>{item.type}</div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 10,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => deleteAction(event, index)}
+                      >
+                        <DeleteOutlined />
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               );
             }
@@ -105,7 +122,7 @@ export function ComponentEvent() {
     };
   });
 
-  function handleModalOk(config?: GoToLinkConfig | ShowMessageConfig) {
+  function handleModalOk(config?: ActionConfig) {
     if (!config || !curEvent || !curComponent) {
       return;
     }
