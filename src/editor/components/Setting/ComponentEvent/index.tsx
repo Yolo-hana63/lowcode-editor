@@ -8,7 +8,7 @@ import { useState } from "react";
 import { GoToLinkConfig } from "./Actions/GoToLink";
 import { ShowMessageConfig } from "./Actions/ShowMessages";
 import { ActionConfig, ActionModal } from "./ActionModal";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 export function ComponentEvent() {
   const { curComponentId, curComponent, updateComponentProps } =
@@ -16,6 +16,8 @@ export function ComponentEvent() {
   const { componentConfig } = useComponentConfigStore();
   const [actionModalOpen, setActionModalOpen] = useState(false);
   const [curEvent, setCurEvent] = useState<ComponentEventType>();
+  const [curAction, setCurAction] = useState<ActionConfig>();
+  const [curActionIndex, setCurActionIndex] = useState<number>();
 
   if (!curComponent) return null;
 
@@ -33,6 +35,16 @@ export function ComponentEvent() {
         actions: actions,
       },
     });
+  }
+
+  // 点击编辑打开弹窗
+  function editAction(config: ActionConfig, index: number) {
+    if (!curComponent) {
+      return;
+    }
+    setCurAction(config);
+    setCurActionIndex(index);
+    setActionModalOpen(true);
   }
 
   const items: CollapseProps["items"] = (
@@ -69,6 +81,17 @@ export function ComponentEvent() {
                         style={{
                           position: "absolute",
                           top: 10,
+                          right: 30,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => editAction(item, index)}
+                      >
+                        <EditOutlined />
+                      </div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
                           right: 10,
                           cursor: "pointer",
                         }}
@@ -87,6 +110,17 @@ export function ComponentEvent() {
                         style={{
                           position: "absolute",
                           top: 10,
+                          right: 30,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => editAction(item, index)}
+                      >
+                        <EditOutlined />
+                      </div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
                           right: 10,
                           cursor: "pointer",
                         }}
@@ -100,6 +134,17 @@ export function ComponentEvent() {
                     <div className="border border-[#aaa] m-[10px] p-[10px] relative">
                       <div className="text-[blue]">消息弹窗</div>
                       <div>{item.type}</div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 30,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => editAction(item, index)}
+                      >
+                        <EditOutlined />
+                      </div>
                       <div
                         style={{
                           position: "absolute",
@@ -127,15 +172,30 @@ export function ComponentEvent() {
       return;
     }
 
-    updateComponentProps(curComponent.id, {
-      [curEvent.name]: {
-        actions: [
-          ...(curComponent.props[curEvent.name]?.actions || []),
-          config,
-        ],
-      },
-    });
+    if (curAction) {
+      // 修改
+      updateComponentProps(curComponent.id, {
+        [curEvent.name]: {
+          actions: curComponent.props[curEvent.name]?.actions.map(
+            (item: ActionConfig, index: number) => {
+              return index === curActionIndex ? config : item;
+            }
+          ),
+        },
+      });
+    } else {
+      // 新增
+      updateComponentProps(curComponent.id, {
+        [curEvent.name]: {
+          actions: [
+            ...(curComponent.props[curEvent.name]?.actions || []),
+            config,
+          ],
+        },
+      });
+    }
 
+    setCurAction(undefined);
     setActionModalOpen(false);
   }
 
@@ -152,8 +212,10 @@ export function ComponentEvent() {
         visible={actionModalOpen}
         handleOk={handleModalOk}
         handleCancel={() => {
+          setCurAction(undefined);
           setActionModalOpen(false);
         }}
+        action={curAction}
       />
     </div>
   );

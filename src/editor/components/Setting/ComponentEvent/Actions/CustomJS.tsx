@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
 import { useComponentsStore } from "../../../../stores/components";
 
@@ -8,15 +8,20 @@ export interface CustomJSConfig {
 }
 
 export interface CustomJSProps {
+  value?: string;
   defaultValue?: string;
   onChange?: (config: CustomJSConfig) => void;
 }
 
 const CustomJS = (props: CustomJSProps) => {
-  const { defaultValue, onChange } = props;
+  const { defaultValue, onChange, value: val } = props;
 
   const { curComponentId } = useComponentsStore();
   const [value, setValue] = useState(defaultValue);
+
+  useEffect(() => {
+    setValue(val);
+  }, [val]);
 
   const handleEditorMount: OnMount = (editor, monaco) => {
     editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyJ, () => {

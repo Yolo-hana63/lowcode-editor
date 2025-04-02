@@ -1,21 +1,36 @@
 import { Modal, Segmented } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GoToLink, GoToLinkConfig } from "../Actions/GoToLink";
 import { ShowMessage, ShowMessageConfig } from "../Actions/ShowMessages";
 import CustomJS, { CustomJSConfig } from "../Actions/CustomJS";
 
 interface ActionModalProps {
   visible: boolean;
+  action?: ActionConfig;
   handleOk: (config?: ActionConfig) => void;
   handleCancel: () => void;
 }
 
 export type ActionConfig = GoToLinkConfig | ShowMessageConfig | CustomJSConfig;
+
 export function ActionModal(props: ActionModalProps) {
-  const { visible, handleOk, handleCancel } = props;
+  const { visible, handleOk, handleCancel, action } = props;
+
+  const map = {
+    goToLink: "访问链接",
+    showMessage: "消息提示",
+    customJS: "自定义JS",
+  };
 
   const [key, setKey] = useState<string>("访问链接");
   const [curConfig, setCurConfig] = useState<ActionConfig>();
+
+  // 回显
+  useEffect(() => {
+    if (action?.type) {
+      setKey(map[action.type]);
+    }
+  });
 
   return (
     <Modal
@@ -36,6 +51,8 @@ export function ActionModal(props: ActionModalProps) {
         />
         {key === "访问链接" && (
           <GoToLink
+            key="goToLink"
+            value={action?.type === "goToLink" ? action.url : ""}
             onChange={(config) => {
               setCurConfig(config);
             }}
@@ -43,6 +60,8 @@ export function ActionModal(props: ActionModalProps) {
         )}
         {key === "消息提示" && (
           <ShowMessage
+            key="showMessage"
+            value={action?.type === "showMessage" ? action.config : undefined}
             onChange={(config) => {
               setCurConfig(config);
             }}
@@ -50,6 +69,8 @@ export function ActionModal(props: ActionModalProps) {
         )}
         {key === "自定义 JS" && (
           <CustomJS
+            key="customJS"
+            value={action?.type === "customJS" ? action.code : ""}
             onChange={(config) => {
               setCurConfig(config);
             }}

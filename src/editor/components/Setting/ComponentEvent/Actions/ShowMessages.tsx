@@ -1,5 +1,5 @@
 import { Input, Select } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useComponentsStore } from "../../../../stores/components";
 
 export interface ShowMessageConfig {
@@ -12,43 +12,51 @@ export interface ShowMessageConfig {
 
 export interface ShowMessageProps {
   value?: ShowMessageConfig["config"];
+  defaultValue?: ShowMessageConfig["config"];
   onChange?: (config: ShowMessageConfig) => void;
 }
 
 export function ShowMessage(props: ShowMessageProps) {
-  const { value, onChange } = props;
+  const { value: val, defaultValue, onChange } = props;
 
   const { curComponentId } = useComponentsStore();
 
   const [type, setType] = useState<"success" | "error">(
-    value?.type || "success"
+    defaultValue?.type || "success"
   );
-  const [text, setText] = useState<string>(value?.text || "");
+  const [text, setText] = useState<string>(defaultValue?.text || "");
 
-  function messageTypeChange(value: "success" | "error") {
+  useEffect(() => {
+    if (val) {
+      setType(val.type);
+      setText(val.text);
+    }
+  });
+
+  function messageTypeChange(defaultValue: "success" | "error") {
     if (!curComponentId) return;
 
-    setType(value);
+    setType(defaultValue);
 
     onChange?.({
       type: "showMessage",
       config: {
-        type: value,
+        type: defaultValue,
         text,
       },
     });
   }
 
-  function messageTextChange(value: string) {
+  function messageTextChange(defaultValue: string) {
     if (!curComponentId) return;
 
-    setText(value);
+    setText(defaultValue);
 
     onChange?.({
       type: "showMessage",
       config: {
         type,
-        text: value,
+        text: defaultValue,
       },
     });
   }
@@ -61,13 +69,13 @@ export function ShowMessage(props: ShowMessageProps) {
           <Select
             style={{ width: 500, height: 50 }}
             options={[
-              { label: "成功", value: "success" },
-              { label: "失败", value: "error" },
+              { label: "成功", defaultValue: "success" },
+              { label: "失败", defaultValue: "error" },
             ]}
-            onChange={(value) => {
-              messageTypeChange(value);
+            onChange={(defaultValue) => {
+              messageTypeChange(defaultValue);
             }}
-            value={type}
+            defaultValue={type}
           />
         </div>
       </div>
@@ -77,9 +85,9 @@ export function ShowMessage(props: ShowMessageProps) {
           <Input
             style={{ width: 500, height: 50 }}
             onChange={(e) => {
-              messageTextChange(e.target.value);
+              messageTextChange(e.target.defaultValue);
             }}
-            value={text}
+            defaultValue={text}
           />
         </div>
       </div>
