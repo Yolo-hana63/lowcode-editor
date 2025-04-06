@@ -3,7 +3,6 @@ import { useComponentConfigStore } from "../../stores/component-config";
 import { Component, useComponentsStore } from "../../stores/components";
 import { message } from "antd";
 import { ActionConfig } from "../Setting/ComponentEvent/ActionModal";
-import Test from "./Test";
 
 // 维护集合
 // const EventsMap = {
@@ -96,7 +95,6 @@ export function Preview() {
 
   return (
     <div>
-      <Test></Test>
       <div>{renderComponents(components)}</div>
     </div>
   );

@@ -8,7 +8,6 @@ const ButtonProd = ({
   styles,
   ...props
 }: CommonComponentProps) => {
-  console.log(props, 111);
   return (
     <AntdButton type={type} style={styles} {...props}>
       {text}
