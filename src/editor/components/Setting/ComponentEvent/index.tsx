@@ -1,5 +1,8 @@
 import { Collapse, Input, Select, CollapseProps, Button } from "antd";
-import { useComponentsStore } from "../../../stores/components";
+import {
+  getComponentById,
+  useComponentsStore,
+} from "../../../stores/components";
 import {
   ComponentEvent as ComponentEventType,
   useComponentConfigStore,
@@ -11,7 +14,7 @@ import { ActionConfig, ActionModal } from "./ActionModal";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 export function ComponentEvent() {
-  const { curComponentId, curComponent, updateComponentProps } =
+  const { curComponentId, curComponent, updateComponentProps, components } =
     useComponentsStore();
   const { componentConfig } = useComponentConfigStore();
   const [actionModalOpen, setActionModalOpen] = useState(false);
@@ -106,6 +109,44 @@ export function ComponentEvent() {
                       <div className="text-[blue]">消息弹窗</div>
                       <div>{item.config.type}</div>
                       <div>{item.config.text}</div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 30,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => editAction(item, index)}
+                      >
+                        <EditOutlined />
+                      </div>
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 10,
+                          right: 10,
+                          cursor: "pointer",
+                        }}
+                        onClick={() => deleteAction(event, index)}
+                      >
+                        <DeleteOutlined />
+                      </div>
+                    </div>
+                  ) : null}
+                  {item.type === "componentMethod" ? (
+                    <div
+                      key="componentMethod"
+                      className="border border-[#aaa] m-[10px] p-[10px] relative"
+                    >
+                      <div className="text-[blue]">组件方法</div>
+                      <div>
+                        {
+                          getComponentById(item.config.componentId, components)
+                            ?.desc
+                        }
+                      </div>
+                      <div>{item.config.componentId}</div>
+                      <div>{item.config.method}</div>
                       <div
                         style={{
                           position: "absolute",
