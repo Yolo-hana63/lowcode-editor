@@ -231,8 +231,8 @@ export const useComponentConfigStore = create<State & Action>((set) => ({
       name: "FormItem",
       desc: "表单项",
       defaultProps: {
-        // name: new Date().getTime(),
-        // label: "姓名",
+        name: new Date().getTime(),
+        label: "姓名",
       },
       dev: FormItemDev,
       prod: FormItemProd,
