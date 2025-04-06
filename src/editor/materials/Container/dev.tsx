@@ -4,7 +4,10 @@ import { CommonComponentProps } from "../../interface";
 import { useEffect, useRef } from "react";
 
 const Container = ({ id, name, children, styles }: CommonComponentProps) => {
-  const { canDrop, drop } = useMaterailDrop(["Button", "Container"], id);
+  const { canDrop, drop } = useMaterailDrop(
+    ["Button", "Container", "Table"],
+    id
+  );
 
   // 因为要同时给div绑定drag和drop，所以拿到ref之后再绑定
   const divRef = useRef<HTMLDivElement>(null);
